@@ -8,6 +8,7 @@ import { Button } from 'react-bootstrap';
 import { getAllQuizzes } from '../../lib/firebaseDb';
 import { ReactComponent as Loader } from '../../images/loading.svg';
 import QuizItemList from '../QuizItemList';
+import QuizSelector from '../QuizSelector';
 
 const Wrapper = styled.div({
   display: 'flex',
@@ -48,9 +49,15 @@ EmptyQuiz.propTypes = {
 
 const BeforeStart = ({
   quiz, 
-  handleStart
+  quizzes,
+  handleStart,
+  handleSelect,
 }) => (
   <Wrapper>
+    <QuizSelector
+      quizzes={quizzes}
+      handleSelect={handleSelect}
+    />
     <QuizBox>
       <Centered>
         <div css={css`
@@ -110,6 +117,19 @@ export default class extends Component {
     })
   }
 
+  selectQuiz = async(val) => {
+    const quizzes = {};
+    const snapshot = await getAllQuizzes();
+    snapshot.forEach(doc => {
+      quizzes[doc.id] = doc.data();
+    })
+    const chosenQuizId = Object.keys(quizzes)[val];
+    this.setState({
+      chosenQuizId,
+      loading: false
+    })
+  }
+
   render() {
     const { 
       loading, 
@@ -129,7 +149,10 @@ export default class extends Component {
       return (
         <BeforeStart 
           handleStart={this.startQuiz}
-          quiz={chosenQuiz} />
+          quizzes={quizzes}
+          quiz={chosenQuiz}
+          handleSelect={(val) => this.selectQuiz(val)}
+          />
       );
     }
     if (status === 'started') {
