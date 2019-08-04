@@ -6,11 +6,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 export const getAllQuizzes = () => {
-  return db.collection("quizes").get();
+  return db.collection("quiz").get();
 }
 
 export const getAllQuizItems = (quizId) => {
-  return db.collection("quizes")
+  return db.collection("quiz")
     .doc(quizId)
     .collection('quiz_items')
     .orderBy("order", "asc")
@@ -18,7 +18,7 @@ export const getAllQuizItems = (quizId) => {
 }
 
 export const getAllQuizOptions = (quizId, itemId) => {
-  return db.collection("quizes")
+  return db.collection("quiz")
     .doc(quizId)
     .collection('quiz_items')
     .doc(itemId)
